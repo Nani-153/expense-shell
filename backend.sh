@@ -62,8 +62,26 @@ VALIDATE $? "Downloading backend application code"
 
 cd /app
 
-rm -rf /app/*  # remove the existing code
+rm -rf /app/*
 unzip /tmp/backend.zip &>>$LOG_FILE
 VALIDATE $? "Extracting backend application code"
 
 npm install &>>$LOG_FILE
+cp /home/ec2-user/expense-shell/backend.service /etc/systemd/system/backend.service
+
+# load the data before running backend
+
+dnf install mysql -y &>>$LOG_FILE
+VALIDATE $? "Installing MySQL Client"
+
+mysql -h mysql.narayanarao.cloud -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE
+VALIDATE $? "Schema loading"
+
+systemctl daemon-reload &>>$LOG_FILE
+VALIDATE $? "Daemon reload"
+
+systemctl enable backend &>>$LOG_FILE
+VALIDATE $? "Enabled backend"
+
+systemctl restart backend &>>$LOG_FILE
+VALIDATE $? "Restarted Backend"
