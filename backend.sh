@@ -37,13 +37,13 @@ CHECK_ROOT
 dnf module disable nodejs -y &>>$LOG_FILE
 VALIDATE $? "Disabling default Nodejs"
 
-dnf module enable nodejs:20 -y &>>$LOG_FILE
-VALIDATE $? "Enabling Nodejs version 20"
+dnf module enable nodejs:22 -y &>>$LOG_FILE
+VALIDATE $? "Enabling Nodejs version 22"
 
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installing Nodejs"
 
-
+[]
 id expense &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
@@ -67,15 +67,17 @@ unzip /tmp/backend.zip &>>$LOG_FILE
 VALIDATE $? "Extracting backend application code"
 
 npm install &>>$LOG_FILE
+VALIDATE $? "Installing dependencies"
+
 cp /home/ec2-user/expense-shell/backend.service /etc/systemd/system/backend.service
 
 # # load the data before running backend
 
-# dnf install mysql -y &>>$LOG_FILE
-# VALIDATE $? "Installing MySQL Client"
+dnf install mysql -y &>>$LOG_FILE
+VALIDATE $? "Installing MySQL Client"
 
-# mysql -h mysql.narayanarao.cloud -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE
-# VALIDATE $? "Schema loading"
+mysql -h mysql.narayanarao.cloud -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE
+VALIDATE $? "Schema loading"
 
 systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "Daemon reload"
