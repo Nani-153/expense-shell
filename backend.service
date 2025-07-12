@@ -3,7 +3,7 @@ Description = Backend Service
 
 [Service]
 User=expense
-Environment=DB_HOST="mysql.narayanarao.cloud"
+Environment=DB_HOST="mysql.daws81s.online"
 ExecStart=/bin/node /app/index.js
 SyslogIdentifier=backend
 
